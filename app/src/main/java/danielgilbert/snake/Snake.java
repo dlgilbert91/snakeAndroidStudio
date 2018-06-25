@@ -7,6 +7,9 @@ public class Snake {
     private enum Direction {UP, DOWN, LEFT, RIGHT};
     private int snakeBlockSize;         //size of each snake segment
 
+    public Snake() {
+
+    }
 
 
 }
