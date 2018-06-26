@@ -16,18 +16,22 @@ import android.graphics.Color;
 import android.graphics.Paint;
 
 public class SnakeEngine extends SurfaceView implements Runnable {
-    private Context context;
+    // Our game thread for the main game loop
     private Thread thread = null;
-    private Snake snake;
-    private Apple apple;
-    private int score;
+
+    // To hold a reference to the Activity
+    private Context context;
+
+    // To hold the screen size in pixels
+    private int screenX;
+    private int screenY;
+
+    // The size in pixels of a snake segment
+    private int blockSize;
+
     // The size in segments of the playable area
     private final int NUM_BLOCKS_WIDE = 40;
     private int numBlocksHigh;
-
-    private int screenX;
-    private int screenY;
-    private int blockSize;
 
     // Control pausing between updates
     private long nextFrameTime;
@@ -35,8 +39,13 @@ public class SnakeEngine extends SurfaceView implements Runnable {
     private final long FPS = 10;
     // There are 1000 milliseconds in a second
     private final long MILLIS_PER_SECOND = 1000;
+// We will draw the frame much more often
+
+    // How many points does the player have
+    private int score;
+
     // Everything we need for drawing
-    // Is the game currently playing?
+// Is the game currently playing?
     private volatile boolean isPlaying;
 
     // A canvas for our paint
@@ -48,14 +57,15 @@ public class SnakeEngine extends SurfaceView implements Runnable {
     // Some paint for our canvas
     private Paint paint;
 
+    Snake snake;
+
     public SnakeEngine(Context context, Point size) {
         super(context);
-        this.context = context;
+
+        context = context;
+
         screenX = size.x;
         screenY = size.y;
-        snake = new Snake();
-        apple = new Apple();
-        isPlaying = true;
 
         // Work out how many pixels each block is
         blockSize = screenX / NUM_BLOCKS_WIDE;
@@ -66,8 +76,39 @@ public class SnakeEngine extends SurfaceView implements Runnable {
         surfaceHolder = getHolder();
         paint = new Paint();
 
+        snake = new Snake(blockSize, numBlocksHigh, NUM_BLOCKS_WIDE);
+
         // Start the game
-        //newGame();
+        NewGame();
+    }
+
+    @Override
+    public void run() {
+
+        while (isPlaying) {
+
+            // Update 10 times a second
+            if(updateRequired()) {
+                update();
+                draw();
+            }
+
+        }
+    }
+
+    public void pause() {
+        isPlaying = false;
+        try {
+            thread.join();
+        } catch (InterruptedException e) {
+            // Error
+        }
+    }
+
+    public void resume() {
+        isPlaying = true;
+        thread = new Thread(this);
+        thread.start();
     }
 
     public void NewGame() {
@@ -76,6 +117,10 @@ public class SnakeEngine extends SurfaceView implements Runnable {
         score = 0;
         // Setup nextFrameTime so an update is triggered
         nextFrameTime = System.currentTimeMillis();
+    }
+
+    public void update() {
+        NewGame();
     }
 
     public void draw() {
@@ -133,38 +178,4 @@ public class SnakeEngine extends SurfaceView implements Runnable {
 
         return false;
     }
-
-    public void update() {
-
-    }
-
-    @Override
-    public void run() {
-
-        while (isPlaying) {
-
-            // Update 10 times a second
-            if(updateRequired()) {
-                update();
-                draw();
-            }
-
-        }
-    }
-
-    public void pause() {
-        isPlaying = false;
-        try {
-            thread.join();
-        } catch (InterruptedException e) {
-            // Error
-        }
-    }
-
-    public void resume() {
-        isPlaying = true;
-        thread = new Thread(this);
-        thread.start();
-    }
-
 }

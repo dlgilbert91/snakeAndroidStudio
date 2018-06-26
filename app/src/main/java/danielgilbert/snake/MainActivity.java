@@ -1,11 +1,12 @@
 package danielgilbert.snake;
 
+import android.app.Activity;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.graphics.Point;
 import android.view.Display;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends Activity {
     SnakeEngine snakeEngine;
 
     @Override
