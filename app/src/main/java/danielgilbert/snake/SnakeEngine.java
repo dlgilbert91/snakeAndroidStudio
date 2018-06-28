@@ -58,6 +58,7 @@ public class SnakeEngine extends SurfaceView implements Runnable {
     private Paint paint;
 
     Snake snake;
+    Apple apple;
 
     public SnakeEngine(Context context, Point size) {
         super(context);
@@ -76,7 +77,8 @@ public class SnakeEngine extends SurfaceView implements Runnable {
         surfaceHolder = getHolder();
         paint = new Paint();
 
-        snake = new Snake(blockSize, numBlocksHigh, NUM_BLOCKS_WIDE);
+        snake = new Snake(numBlocksHigh, NUM_BLOCKS_WIDE);
+        apple = new Apple(numBlocksHigh, NUM_BLOCKS_WIDE);
 
         // Start the game
         NewGame();
@@ -112,15 +114,24 @@ public class SnakeEngine extends SurfaceView implements Runnable {
     }
 
     public void NewGame() {
-/*        snake.SetupSnake();
-        apple.SpawnApple();*/
+        snake.SetupSnake();
+        apple.SetupApple();
         score = 0;
         // Setup nextFrameTime so an update is triggered
         nextFrameTime = System.currentTimeMillis();
     }
 
     public void update() {
-        NewGame();
+        //check snake location
+        //check if apple eaten
+        //check if snake still alive
+        //move snake
+        snake.MoveSnake();
+        if (snake.SnakeAppleCollision(apple.GetAppleX(), apple.GetAppleY())) {
+            score++;
+            apple.SetupApple();
+            snake.IncreaseSnakeLength(1);
+        }
     }
 
     public void draw() {
@@ -138,24 +149,22 @@ public class SnakeEngine extends SurfaceView implements Runnable {
             paint.setTextSize(90);
             canvas.drawText("Score:" + score, 10, 70, paint);
 
-/*            // Draw the snake one block at a time
-            for (int i = 0; i < snakeLength; i++) {
-                canvas.drawRect(snakeXs[i] * blockSize,
-                        (snakeYs[i] * blockSize),
-                        (snakeXs[i] * blockSize) + blockSize,
-                        (snakeYs[i] * blockSize) + blockSize,
-                        paint);
-            }*/
+            // Draw the snake one block at a time
+            for (int i = 0; i < snake.GetSnakeLength(); i++) {
+                canvas.drawRect(snake.GetSnakeX(i) * blockSize, snake.GetSnakeY(i) * blockSize,
+                        snake.GetSnakeX(i) * blockSize + blockSize,
+                        snake.GetSnakeY(i) * blockSize + blockSize, paint);
+            }
 
-            // Set the color of the paint to draw Bob red
+            // Set the color of the paint to draw apple red
             paint.setColor(Color.argb(255, 255, 0, 0));
 
-            // Draw Bob
-/*            canvas.drawRect(bobX * blockSize,
-                    (bobY * blockSize),
-                    (bobX * blockSize) + blockSize,
-                    (bobY * blockSize) + blockSize,
-                    paint);*/
+            // Draw apple
+            canvas.drawRect(apple.GetAppleX() * blockSize,
+                    (apple.GetAppleY() * blockSize),
+                    (apple.GetAppleX() * blockSize) + blockSize,
+                    (apple.GetAppleY() * blockSize) + blockSize,
+                    paint);
 
             // Unlock the canvas and reveal the graphics for this frame
             surfaceHolder.unlockCanvasAndPost(canvas);
@@ -177,5 +186,15 @@ public class SnakeEngine extends SurfaceView implements Runnable {
         }
 
         return false;
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent motionEvent) {
+
+        switch (motionEvent.getAction() & MotionEvent.ACTION_MASK) {
+            case MotionEvent.ACTION_UP:
+                snake.SetSnakeDirection(motionEvent.getX(), motionEvent.getY(), screenX, screenY);
+        }
+        return true;
     }
 }

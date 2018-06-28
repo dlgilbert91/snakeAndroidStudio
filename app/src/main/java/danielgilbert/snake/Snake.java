@@ -1,26 +1,26 @@
 package danielgilbert.snake;
 
+import android.util.Log;
+
 public class Snake {
-    private int xLocation;
-    private int yLocation;
     private int snakeLength;
     private enum Direction {UP, DOWN, LEFT, RIGHT};
-    private int snakeBlockSize;         //size of each snake segment
     private int numHorizontalScreenBlocks;
     private int numVerticalScreenBlocks;
 
-    //consider coming back and setting this up as a struct
     private int[] snakeX;
     private int[] snakeY;
+    Direction direction = Direction.RIGHT;
 
-    public Snake(int snakeBlockSize, int verticalBlocks, int horizontalBlocks) {
-        this.snakeBlockSize = snakeBlockSize;
+    //TODO SETUP SNAKE AS A SINGLETON
+    //TODO move setupsnake() call out of constructor
+
+    public Snake(int verticalBlocks, int horizontalBlocks) {
         this.numVerticalScreenBlocks = verticalBlocks;
         this.numHorizontalScreenBlocks = horizontalBlocks;
-        SetupSnake();
     }
 
-    private void SetupSnake() {
+    public void SetupSnake() {
         snakeX = new int[200];
         snakeY = new int[200];
         snakeLength = 1;
@@ -29,8 +29,15 @@ public class Snake {
     }
 
     public int GetSnakeLength() {
+        return snakeLength;
+    }
 
-        return 0;
+    public int GetSnakeX(int index) {
+        return snakeX[index];
+    }
+
+    public int GetSnakeY(int index) {
+        return snakeY[index];
     }
 
     public boolean CheckSnakeCollision() {
@@ -39,10 +46,84 @@ public class Snake {
     }
 
     public void MoveSnake() {
-
+        for (int i = snakeLength; i > 0; i--) {
+            snakeX[i] = snakeX[i - 1];
+            snakeY[i] = snakeY[i - 1];
+        }
+        switch (direction) {
+            case UP:
+                snakeY[0]--;
+                if (snakeY[0] < 0) {
+                    snakeY[0] = numVerticalScreenBlocks;
+                }
+                break;
+            case DOWN:
+                snakeY[0]++;
+                if (snakeY[0] > numVerticalScreenBlocks) {
+                    snakeY[0] = 0;
+                }
+                break;
+            case LEFT:
+                snakeX[0]--;
+                if (snakeX[0] < 0) {
+                    snakeX[0] = numHorizontalScreenBlocks;
+                }
+                break;
+            case RIGHT:
+                snakeX[0]++;
+                if (snakeX[0] > numHorizontalScreenBlocks) {
+                    snakeX[0] = 0;
+                }
+                break;
+        }
     }
 
-    public void DrawSnake() {
+    public void SetSnakeDirection(float motionEventValueX, float motionEventValueY, int screenX, int screenY) {
+        switch(direction) {
+            case UP:
+                if (motionEventValueX < screenX / 2) {
+                    direction = Direction.LEFT;
+                }
+                else if (motionEventValueX > screenX / 2) {
+                    direction = Direction.RIGHT;
+                }
+                break;
+            case DOWN:
+                if (motionEventValueX < screenX / 2) {
+                    direction = Direction.LEFT;
+                }
+                else if (motionEventValueX > screenX / 2) {
+                    direction = Direction.RIGHT;
+                }
+                break;
+            case LEFT:
+                if (motionEventValueY < screenY / 2) {
+                    direction = Direction.UP;
+                }
+                else if (motionEventValueY > screenY / 2) {
+                    direction = Direction.DOWN;
+                }
+                break;
+            case RIGHT:
+                if (motionEventValueY < screenY / 2) {
+                    direction = Direction.UP;
+                }
+                else if (motionEventValueY > screenY / 2) {
+                    direction = Direction.DOWN;
+                }
+                break;
+        }
+    }
 
+    public boolean SnakeAppleCollision(int appleX, int appleY) {
+        if (snakeX[0] == appleX && snakeY[0] == appleY) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public void IncreaseSnakeLength(int amount) {
+        snakeLength += amount;
     }
 }
