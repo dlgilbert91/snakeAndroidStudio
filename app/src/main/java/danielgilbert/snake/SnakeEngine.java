@@ -1,16 +1,10 @@
 package danielgilbert.snake;
 
 import android.content.Context;
-import android.content.res.AssetFileDescriptor;
 import android.graphics.Point;
-import android.media.AudioManager;
-import android.media.SoundPool;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import java.io.IOException;
-import java.util.Random;
-import android.content.res.AssetManager;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -30,7 +24,7 @@ public class SnakeEngine extends SurfaceView implements Runnable {
     private int blockSize;
 
     // The size in segments of the playable area
-    private final int NUM_BLOCKS_WIDE = 40;
+    private final int NUM_BLOCKS_WIDE = 60;
     private int numBlocksHigh;
 
     // Control pausing between updates
@@ -81,7 +75,7 @@ public class SnakeEngine extends SurfaceView implements Runnable {
         apple = new Apple(numBlocksHigh, NUM_BLOCKS_WIDE);
 
         // Start the game
-        NewGame();
+        newGame();
     }
 
     @Override
@@ -113,9 +107,9 @@ public class SnakeEngine extends SurfaceView implements Runnable {
         thread.start();
     }
 
-    public void NewGame() {
-        snake.SetupSnake();
-        apple.SetupApple();
+    public void newGame() {
+        snake.setupSnake();
+        apple.setupApple();
         score = 0;
         // Setup nextFrameTime so an update is triggered
         nextFrameTime = System.currentTimeMillis();
@@ -126,11 +120,11 @@ public class SnakeEngine extends SurfaceView implements Runnable {
         //check if apple eaten
         //check if snake still alive
         //move snake
-        snake.MoveSnake();
-        if (snake.SnakeAppleCollision(apple.GetAppleX(), apple.GetAppleY())) {
+        snake.moveSnake();
+        if (snake.snakeAppleCollision(apple.getAppleX(), apple.getAppleY())) {
             score++;
-            apple.SetupApple();
-            snake.IncreaseSnakeLength(1);
+            apple.setupApple();
+            snake.increaseSnakeLength(1);
         }
     }
 
@@ -150,20 +144,20 @@ public class SnakeEngine extends SurfaceView implements Runnable {
             canvas.drawText("Score:" + score, 10, 70, paint);
 
             // Draw the snake one block at a time
-            for (int i = 0; i < snake.GetSnakeLength(); i++) {
-                canvas.drawRect(snake.GetSnakeX(i) * blockSize, snake.GetSnakeY(i) * blockSize,
-                        snake.GetSnakeX(i) * blockSize + blockSize,
-                        snake.GetSnakeY(i) * blockSize + blockSize, paint);
+            for (int i = 0; i < snake.getSnakeLength(); i++) {
+                canvas.drawRect(snake.getSnakeX(i) * blockSize, snake.getSnakeY(i) * blockSize,
+                        snake.getSnakeX(i) * blockSize + blockSize,
+                        snake.getSnakeY(i) * blockSize + blockSize, paint);
             }
 
             // Set the color of the paint to draw apple red
             paint.setColor(Color.argb(255, 255, 0, 0));
 
             // Draw apple
-            canvas.drawRect(apple.GetAppleX() * blockSize,
-                    (apple.GetAppleY() * blockSize),
-                    (apple.GetAppleX() * blockSize) + blockSize,
-                    (apple.GetAppleY() * blockSize) + blockSize,
+            canvas.drawRect(apple.getAppleX() * blockSize,
+                    (apple.getAppleY() * blockSize),
+                    (apple.getAppleX() * blockSize) + blockSize,
+                    (apple.getAppleY() * blockSize) + blockSize,
                     paint);
 
             // Unlock the canvas and reveal the graphics for this frame
@@ -193,7 +187,7 @@ public class SnakeEngine extends SurfaceView implements Runnable {
 
         switch (motionEvent.getAction() & MotionEvent.ACTION_MASK) {
             case MotionEvent.ACTION_UP:
-                snake.SetSnakeDirection(motionEvent.getX(), motionEvent.getY(), screenX, screenY);
+                snake.setSnakeDirection(motionEvent.getX(), motionEvent.getY(), screenX, screenY);
         }
         return true;
     }

@@ -20,7 +20,7 @@ public class Snake {
         this.numHorizontalScreenBlocks = horizontalBlocks;
     }
 
-    public void SetupSnake() {
+    public void setupSnake() {
         snakeX = new int[200];
         snakeY = new int[200];
         snakeLength = 1;
@@ -28,15 +28,15 @@ public class Snake {
         snakeY[0] = numVerticalScreenBlocks / 2;
     }
 
-    public int GetSnakeLength() {
+    public int getSnakeLength() {
         return snakeLength;
     }
 
-    public int GetSnakeX(int index) {
+    public int getSnakeX(int index) {
         return snakeX[index];
     }
 
-    public int GetSnakeY(int index) {
+    public int getSnakeY(int index) {
         return snakeY[index];
     }
 
@@ -45,7 +45,7 @@ public class Snake {
         return false;
     }
 
-    public void MoveSnake() {
+    public void moveSnake() {
         for (int i = snakeLength; i > 0; i--) {
             snakeX[i] = snakeX[i - 1];
             snakeY[i] = snakeY[i - 1];
@@ -78,7 +78,7 @@ public class Snake {
         }
     }
 
-    public void SetSnakeDirection(float motionEventValueX, float motionEventValueY, int screenX, int screenY) {
+    public void setSnakeDirection(float motionEventValueX, float motionEventValueY, int screenX, int screenY) {
         switch(direction) {
             case UP:
                 if (motionEventValueX < screenX / 2) {
@@ -115,7 +115,7 @@ public class Snake {
         }
     }
 
-    public boolean SnakeAppleCollision(int appleX, int appleY) {
+    public boolean snakeAppleCollision(int appleX, int appleY) {
         if (snakeX[0] == appleX && snakeY[0] == appleY) {
             return true;
         } else {
@@ -123,7 +123,7 @@ public class Snake {
         }
     }
 
-    public void IncreaseSnakeLength(int amount) {
+    public void increaseSnakeLength(int amount) {
         snakeLength += amount;
     }
 }

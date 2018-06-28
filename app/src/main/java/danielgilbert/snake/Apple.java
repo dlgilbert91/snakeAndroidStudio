@@ -13,17 +13,17 @@ public class Apple {
         numVerticalScreenBlocks = verticalBlocks;
     }
 
-    public void SetupApple() {
+    public void setupApple() {
         Random random = new Random();
         xLocation = random.nextInt(numHorizontalScreenBlocks);
         yLocation = random.nextInt(numVerticalScreenBlocks);
     }
 
-    public int GetAppleX() {
+    public int getAppleX() {
         return xLocation;
     }
 
-    public int GetAppleY() {
+    public int getAppleY() {
         return yLocation;
     }
 }
