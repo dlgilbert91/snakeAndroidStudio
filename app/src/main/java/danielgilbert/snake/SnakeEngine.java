@@ -2,12 +2,17 @@ package danielgilbert.snake;
 
 import android.content.Context;
 import android.graphics.Point;
+import android.os.CountDownTimer;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+
+import java.util.ArrayList;
+import java.util.Random;
 
 public class SnakeEngine extends SurfaceView implements Runnable {
     // Our game thread for the main game loop
@@ -53,6 +58,10 @@ public class SnakeEngine extends SurfaceView implements Runnable {
 
     Snake snake;
     Apple apple;
+    private CountDownTimer mCountDownTimer;
+    private boolean isPowerUpTimerRunning = false;
+    private int powerUpGenerator;
+    private ArrayList<PowerUp> powerUpList = new ArrayList<PowerUp>();
 
     public SnakeEngine(Context context, Point size) {
         super(context);
@@ -86,9 +95,9 @@ public class SnakeEngine extends SurfaceView implements Runnable {
             // Update 10 times a second
             if(updateRequired()) {
                 update();
+                checkTimer();
                 draw();
             }
-
         }
     }
 
@@ -107,12 +116,22 @@ public class SnakeEngine extends SurfaceView implements Runnable {
         thread.start();
     }
 
+
     public void newGame() {
         snake.setupSnake();
         apple.setupApple();
         score = 0;
         // Setup nextFrameTime so an update is triggered
         nextFrameTime = System.currentTimeMillis();
+        mCountDownTimer = new CountDownTimer(10000, 1000) {
+
+            public void onTick(long millisUntilFinished) { }
+
+            public void onFinish() {
+                //generatePowerUp();
+                isPowerUpTimerRunning = false;
+            }
+        }.start();
     }
 
     public void update() {
@@ -125,6 +144,32 @@ public class SnakeEngine extends SurfaceView implements Runnable {
             score++;
             apple.setupApple();
             snake.increaseSnakeLength(1);
+        }
+    }
+
+    private void checkTimer() {
+        if (!isPowerUpTimerRunning) {
+            mCountDownTimer.start();
+            isPowerUpTimerRunning = true;
+        }
+    }
+
+    private void generatePowerUp() {
+        Random random = new Random();
+        powerUpGenerator = random.nextInt(2);
+        if (powerUpGenerator == 0) {
+            PowerUp powerUp;
+            PowerUpFactory PF = new PowerUpFactory();
+            powerUp = PF.getPowerUp("Golden", numBlocksHigh, NUM_BLOCKS_WIDE);
+            powerUpList.add(powerUp);
+        }
+        else if (powerUpGenerator == 1) {
+
+        }
+        else if (powerUpGenerator == 2) {
+
+        } else {
+            Log.e("POWERUP", "Generated powerup number not in bounds");
         }
     }
 
@@ -160,10 +205,25 @@ public class SnakeEngine extends SurfaceView implements Runnable {
                     (apple.getAppleY() * blockSize) + blockSize,
                     paint);
 
+            //Draw powerups
+            drawPowerUps();
+
             // Unlock the canvas and reveal the graphics for this frame
             surfaceHolder.unlockCanvasAndPost(canvas);
         }
     }
+
+    public void drawPowerUps() {
+        for (PowerUp p : powerUpList) {
+            paint.setColor(p.getPaintColour());
+            canvas.drawRect(p.getPowerUpX() * blockSize,
+                    (p.getPowerUpY() * blockSize),
+                    (p.getPowerUpX() * blockSize) + blockSize,
+                    (p.getPowerUpY() * blockSize) + blockSize,
+                    paint);
+        }
+    }
+
 
     public boolean updateRequired() {
 
@@ -178,7 +238,6 @@ public class SnakeEngine extends SurfaceView implements Runnable {
             // functions are executed
             return true;
         }
-
         return false;
     }
 

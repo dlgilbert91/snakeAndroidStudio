@@ -1,22 +1,32 @@
 package danielgilbert.snake;
 
+import java.util.Random;
+
 public abstract class PowerUp {
-    private int locationX;
-    private int locationY;
+    private int xLocation;
+    private int yLocation;
+    private int numHorizontalScreenBlocks;
+    private int numVerticalScreenBlocks;
     private boolean isSpawned;
 
-    public PowerUp(int locationX, int locationY) {
-        this.locationX = locationX;
-        this.locationY = locationY;
+    public PowerUp(int verticalBlocks, int horizontalBlocks) {
         isSpawned = false;
+        setPowerUpLocation();
+        numHorizontalScreenBlocks = horizontalBlocks;
+        numVerticalScreenBlocks = verticalBlocks;
     }
 
+    public void setPowerUpLocation() {
+        Random random = new Random();
+        xLocation = random.nextInt(numHorizontalScreenBlocks);
+        yLocation = random.nextInt(numVerticalScreenBlocks);
+    }
     public int getPowerUpX() {
-        return locationX;
+        return xLocation;
     }
 
     public int getPowerUpY() {
-        return locationY;
+        return yLocation;
     }
 
     public boolean isPowerUpSpawned() {
@@ -24,5 +34,5 @@ public abstract class PowerUp {
     }
 
     //todo public abstract void getSpawnSound();
-    //todo public abstract void getPaintColour();
+    public abstract int getPaintColour();
 }
