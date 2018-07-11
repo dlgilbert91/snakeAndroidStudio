@@ -11,9 +11,9 @@ public abstract class PowerUp {
 
     public PowerUp(int verticalBlocks, int horizontalBlocks) {
         isSpawned = false;
-        setPowerUpLocation();
         numHorizontalScreenBlocks = horizontalBlocks;
         numVerticalScreenBlocks = verticalBlocks;
+        setPowerUpLocation();
     }
 
     public void setPowerUpLocation() {
@@ -35,4 +35,5 @@ public abstract class PowerUp {
 
     //todo public abstract void getSpawnSound();
     public abstract int getPaintColour();
+    public abstract String getPowerUpType();
 }

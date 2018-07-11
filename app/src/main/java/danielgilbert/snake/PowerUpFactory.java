@@ -3,10 +3,16 @@ package danielgilbert.snake;
 public class PowerUpFactory {
 
     public PowerUp getPowerUp(String powerUpCode, int numBlocksHigh, int NUM_BLOCKS_WIDE) {
-        PowerUp power = null;
-        if (powerUpCode == "Golden") {
+        if (powerUpCode == "Gold") {
+            PowerUp power;
             power = new GoldPowerUp(numBlocksHigh, NUM_BLOCKS_WIDE);
+            return power;
         }
-        return power;
+        else if (powerUpCode == "Green") {
+            PowerUp power;
+            power = new GreenPowerUp(numBlocksHigh, NUM_BLOCKS_WIDE);
+            return power;
+        }
+        return null;
     }
 }

@@ -1,12 +1,15 @@
 package danielgilbert.snake;
 
-import android.util.Log;
+import java.util.ArrayList;
 
 public class Snake {
     private int snakeLength;
+
     private enum Direction {UP, DOWN, LEFT, RIGHT};
     private int numHorizontalScreenBlocks;
     private int numVerticalScreenBlocks;
+    private int snakeMoveSpeed = 1;
+
 
     private int[] snakeX;
     private int[] snakeY;
@@ -121,6 +124,15 @@ public class Snake {
         } else {
             return false;
         }
+    }
+
+    public String snakePowerUpCollision(ArrayList<PowerUp> powerUpArrayList) {
+        for (PowerUp p : powerUpArrayList) {
+            if (snakeX[0] == p.getPowerUpX() && snakeY[0] == p.getPowerUpY()) {
+                return p.getPowerUpType();
+            }
+        }
+        return null;
     }
 
     public void increaseSnakeLength(int amount) {

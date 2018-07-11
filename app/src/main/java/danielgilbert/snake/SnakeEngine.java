@@ -35,7 +35,7 @@ public class SnakeEngine extends SurfaceView implements Runnable {
     // Control pausing between updates
     private long nextFrameTime;
     // Update the game 10 times per second
-    private final long FPS = 10;
+    private long FPS = 10;
     // There are 1000 milliseconds in a second
     private final long MILLIS_PER_SECOND = 1000;
 // We will draw the frame much more often
@@ -59,6 +59,7 @@ public class SnakeEngine extends SurfaceView implements Runnable {
     Snake snake;
     Apple apple;
     private CountDownTimer mCountDownTimer;
+    private CountDownTimer mGreenPowerUpCountDownTimer;
     private boolean isPowerUpTimerRunning = false;
     private int powerUpGenerator;
     private ArrayList<PowerUp> powerUpList = new ArrayList<PowerUp>();
@@ -123,13 +124,13 @@ public class SnakeEngine extends SurfaceView implements Runnable {
         score = 0;
         // Setup nextFrameTime so an update is triggered
         nextFrameTime = System.currentTimeMillis();
-        mCountDownTimer = new CountDownTimer(10000, 1000) {
+        mCountDownTimer = new CountDownTimer(3000, 1000) {
 
             public void onTick(long millisUntilFinished) { }
 
             public void onFinish() {
-                //generatePowerUp();
                 isPowerUpTimerRunning = false;
+                generatePowerUp();
             }
         }.start();
     }
@@ -144,6 +145,21 @@ public class SnakeEngine extends SurfaceView implements Runnable {
             score++;
             apple.setupApple();
             snake.increaseSnakeLength(1);
+        }
+        //TODO remove powerup after collision
+        if (snake.snakePowerUpCollision(powerUpList) == "Gold") {
+            score += 5;
+        }
+        else if (snake.snakePowerUpCollision(powerUpList) == "Green") {
+            FPS = 20;
+/*            mGreenPowerUpCountDownTimer = new CountDownTimer(5000, 1000) {
+
+                public void onTick(long millisUntilFinished) { }
+
+                public void onFinish() {
+                    FPS = 10;
+                }
+            }.start();*/
         }
     }
 
@@ -160,11 +176,14 @@ public class SnakeEngine extends SurfaceView implements Runnable {
         if (powerUpGenerator == 0) {
             PowerUp powerUp;
             PowerUpFactory PF = new PowerUpFactory();
-            powerUp = PF.getPowerUp("Golden", numBlocksHigh, NUM_BLOCKS_WIDE);
+            powerUp = PF.getPowerUp("Gold", numBlocksHigh, NUM_BLOCKS_WIDE);
             powerUpList.add(powerUp);
         }
         else if (powerUpGenerator == 1) {
-
+            PowerUp powerUp;
+            PowerUpFactory PF = new PowerUpFactory();
+            powerUp = PF.getPowerUp("Green", numBlocksHigh, NUM_BLOCKS_WIDE);
+            powerUpList.add(powerUp);
         }
         else if (powerUpGenerator == 2) {
 
