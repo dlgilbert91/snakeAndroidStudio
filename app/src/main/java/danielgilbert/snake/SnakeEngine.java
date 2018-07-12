@@ -12,6 +12,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Random;
 
 public class SnakeEngine extends SurfaceView implements Runnable {
@@ -60,9 +61,10 @@ public class SnakeEngine extends SurfaceView implements Runnable {
     Apple apple;
     private CountDownTimer mCountDownTimer;
     private CountDownTimer mGreenPowerUpCountDownTimer;
-    private boolean isPowerUpTimerRunning = false;
+    private boolean isPowerUpTimerRunning = true;
     private int powerUpGenerator;
-    private ArrayList<PowerUp> powerUpList = new ArrayList<PowerUp>();
+    private static ArrayList<PowerUp> powerUpList = new ArrayList<PowerUp>();
+    private int snakeGreenPowerUpCounter = 0;
 
     public SnakeEngine(Context context, Point size) {
         super(context);
@@ -117,16 +119,15 @@ public class SnakeEngine extends SurfaceView implements Runnable {
         thread.start();
     }
 
-
     public void newGame() {
         snake.setupSnake();
         apple.setupApple();
         score = 0;
         // Setup nextFrameTime so an update is triggered
         nextFrameTime = System.currentTimeMillis();
-        mCountDownTimer = new CountDownTimer(3000, 1000) {
+        mCountDownTimer = new CountDownTimer(3000, MILLIS_PER_SECOND) {
 
-            public void onTick(long millisUntilFinished) { }
+            public void onTick(long millisUntilFinished) { snakeGreenPowerUpCounter++; }
 
             public void onFinish() {
                 isPowerUpTimerRunning = false;
@@ -140,6 +141,9 @@ public class SnakeEngine extends SurfaceView implements Runnable {
         //check if apple eaten
         //check if snake still alive
         //move snake
+        if (snakeGreenPowerUpCounter >= 5) {
+            FPS = 10;
+        }
         snake.moveSnake();
         if (snake.snakeAppleCollision(apple.getAppleX(), apple.getAppleY())) {
             score++;
@@ -152,14 +156,7 @@ public class SnakeEngine extends SurfaceView implements Runnable {
         }
         else if (snake.snakePowerUpCollision(powerUpList) == "Green") {
             FPS = 20;
-/*            mGreenPowerUpCountDownTimer = new CountDownTimer(5000, 1000) {
-
-                public void onTick(long millisUntilFinished) { }
-
-                public void onFinish() {
-                    FPS = 10;
-                }
-            }.start();*/
+            snakeGreenPowerUpCounter = 0;
         }
     }
 
@@ -184,9 +181,6 @@ public class SnakeEngine extends SurfaceView implements Runnable {
             PowerUpFactory PF = new PowerUpFactory();
             powerUp = PF.getPowerUp("Green", numBlocksHigh, NUM_BLOCKS_WIDE);
             powerUpList.add(powerUp);
-        }
-        else if (powerUpGenerator == 2) {
-
         } else {
             Log.e("POWERUP", "Generated powerup number not in bounds");
         }
@@ -242,7 +236,6 @@ public class SnakeEngine extends SurfaceView implements Runnable {
                     paint);
         }
     }
-
 
     public boolean updateRequired() {
 

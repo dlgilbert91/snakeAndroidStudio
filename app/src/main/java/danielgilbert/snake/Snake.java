@@ -127,12 +127,14 @@ public class Snake {
     }
 
     public String snakePowerUpCollision(ArrayList<PowerUp> powerUpArrayList) {
+        String powerUpType = null;
         for (PowerUp p : powerUpArrayList) {
             if (snakeX[0] == p.getPowerUpX() && snakeY[0] == p.getPowerUpY()) {
-                return p.getPowerUpType();
+                powerUpType =  p.getPowerUpType();
+                powerUpArrayList.remove(p);
             }
         }
-        return null;
+        return powerUpType;
     }
 
     public void increaseSnakeLength(int amount) {
