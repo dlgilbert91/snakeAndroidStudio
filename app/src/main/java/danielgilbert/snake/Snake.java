@@ -1,5 +1,6 @@
 package danielgilbert.snake;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Snake {
@@ -111,12 +112,14 @@ public class Snake {
         }
     }
 
-    public boolean snakeAppleCollision(int appleX, int appleY) {
-        if (snakeX[0] == appleX && snakeY[0] == appleY) {
-            return true;
-        } else {
-            return false;
+    public boolean snakeAppleCollision(ArrayList<Apple> appleArrayList) {
+        for (Apple a : appleArrayList) {
+            if (snakeX[0] == a.getAppleX() && snakeY[0] == a.getAppleY()) {
+                appleArrayList.remove(a);
+                return true;
+            }
         }
+        return false;
     }
 
     public String snakePowerUpCollision(HashMap<String, PowerUp> powerUpHashMap) {
