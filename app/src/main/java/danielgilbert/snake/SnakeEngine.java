@@ -1,6 +1,8 @@
 package danielgilbert.snake;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.os.CountDownTimer;
 import android.util.Log;
@@ -61,10 +63,16 @@ public class SnakeEngine extends SurfaceView implements Runnable {
     private CountDownTimer mCountDownTimer;
     private boolean isPowerUpTimerRunning = true;
     private int powerUpGenerator;
-    private static ArrayList<Apple> appleArrayList = new ArrayList<>();
-    private static HashMap<String, PowerUp> powerUpHashMap = new HashMap<>();
+    private ArrayList<Apple> appleArrayList = new ArrayList<>();
+    private HashMap<String, PowerUp> powerUpHashMap = new HashMap<>();
     private int snakeGreenPowerUpCounter = 0;
     private int appleSpawnCounter = 0;
+    Bitmap appleBitmap;
+    Bitmap scaledAppleBitmap;
+    Bitmap goldAppleBitmap;
+    Bitmap scaledGoldAppleBitmap;
+    Bitmap arrowBitmap;
+    Bitmap scaledArrowBitmap;
 
     public SnakeEngine(Context context, Point size) {
         super(context);
@@ -82,8 +90,6 @@ public class SnakeEngine extends SurfaceView implements Runnable {
         // Initialize the drawing objects
         surfaceHolder = getHolder();
         paint = new Paint();
-
-        snake = new Snake(numBlocksHigh, NUM_BLOCKS_WIDE);
 
         // Start the game
         newGame();
@@ -120,6 +126,8 @@ public class SnakeEngine extends SurfaceView implements Runnable {
 
     public void newGame() {
         Apple apple = new Apple(numBlocksHigh, NUM_BLOCKS_WIDE);
+        snake = new Snake(numBlocksHigh, NUM_BLOCKS_WIDE);
+        setupBitmaps();
         snake.setupSnake();
         apple.setupApple();
         appleArrayList.add(apple);
@@ -175,6 +183,25 @@ public class SnakeEngine extends SurfaceView implements Runnable {
             mCountDownTimer.start();
             isPowerUpTimerRunning = true;
         }
+    }
+
+    private void setupBitmaps() {
+        int sizeY;
+        int sizeX;
+        appleBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.apple);
+        sizeY = screenY * 4 / 100;
+        sizeX= appleBitmap.getWidth() * sizeY / appleBitmap.getHeight();
+        scaledAppleBitmap = Bitmap.createScaledBitmap(appleBitmap, sizeX, sizeY, false);
+
+        goldAppleBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.goldapple);
+        sizeY = screenY * 4 / 100;
+        sizeX= goldAppleBitmap.getWidth() * sizeY / goldAppleBitmap.getHeight();
+        scaledGoldAppleBitmap = Bitmap.createScaledBitmap(goldAppleBitmap, sizeX, sizeY, false);
+
+        arrowBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.arrow);
+        sizeY = screenY * 4 / 100;
+        sizeX= arrowBitmap.getWidth() * sizeY / arrowBitmap.getHeight();
+        scaledArrowBitmap = Bitmap.createScaledBitmap(arrowBitmap, sizeX, sizeY, false);
     }
 
     private void generatePowerUp() {
@@ -252,11 +279,13 @@ public class SnakeEngine extends SurfaceView implements Runnable {
 
     public void drawApples() {
         for (Apple a : appleArrayList) {
-            canvas.drawRect(a.getAppleX() * blockSize,
+            /*canvas.drawRect(a.getAppleX() * blockSize,
                     (a.getAppleY() * blockSize),
                     (a.getAppleX() * blockSize) + blockSize,
                     (a.getAppleY() * blockSize) + blockSize,
-                    paint);
+                    paint);*/
+            //canvas.drawBitmap(scaledAppleBitmap, a.getAppleX() - (appleBitmap.getWidth() / 2), a.getAppleY() - (appleBitmap.getHeight() / 2), null);
+            canvas.drawBitmap(scaledAppleBitmap, a.getAppleX() * blockSize, a.getAppleY() * blockSize, null);
         }
     }
 
@@ -264,11 +293,17 @@ public class SnakeEngine extends SurfaceView implements Runnable {
         for (PowerUp p : powerUpHashMap.values()) {
             paint.setColor(p.getPaintColour());
             if (p.isPowerUpSpawned()) {
-                canvas.drawRect(p.getPowerUpX() * blockSize,
+                /*canvas.drawRect(p.getPowerUpX() * blockSize,
                         (p.getPowerUpY() * blockSize),
                         (p.getPowerUpX() * blockSize) + blockSize,
                         (p.getPowerUpY() * blockSize) + blockSize,
-                        paint);
+                        paint);*/
+                if (p.getPowerUpType() == "Gold") {
+                    canvas.drawBitmap(scaledGoldAppleBitmap, p.getPowerUpX() * blockSize, p.getPowerUpY() * blockSize, paint);
+                }
+                else if (p.getPowerUpType() == "Green") {
+                    canvas.drawBitmap(scaledArrowBitmap, p.getPowerUpX() * blockSize, p.getPowerUpY() * blockSize, paint);
+                }
             }
         }
     }
