@@ -7,10 +7,10 @@ public abstract class PowerUp {
     private int yLocation;
     private int numHorizontalScreenBlocks;
     private int numVerticalScreenBlocks;
-    private boolean isSpawned;
+    private boolean isActive;
 
     public PowerUp(int verticalBlocks, int horizontalBlocks) {
-        isSpawned = false;
+        isActive = true;
         numHorizontalScreenBlocks = horizontalBlocks;
         numVerticalScreenBlocks = verticalBlocks;
         setPowerUpLocation();
@@ -30,7 +30,11 @@ public abstract class PowerUp {
     }
 
     public boolean isPowerUpSpawned() {
-        return isSpawned;
+        return isActive;
+    }
+
+    public void setIsPowerUpSpawned(boolean isSpawned) {
+        isActive = isSpawned;
     }
 
     //todo public abstract void getSpawnSound();

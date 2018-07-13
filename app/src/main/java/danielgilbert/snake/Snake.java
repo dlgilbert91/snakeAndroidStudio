@@ -1,6 +1,6 @@
 package danielgilbert.snake;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Snake {
     private int snakeLength;
@@ -8,8 +8,6 @@ public class Snake {
     private enum Direction {UP, DOWN, LEFT, RIGHT};
     private int numHorizontalScreenBlocks;
     private int numVerticalScreenBlocks;
-    private int snakeMoveSpeed = 1;
-
 
     private int[] snakeX;
     private int[] snakeY;
@@ -41,11 +39,6 @@ public class Snake {
 
     public int getSnakeY(int index) {
         return snakeY[index];
-    }
-
-    public boolean CheckSnakeCollision() {
-
-        return false;
     }
 
     public void moveSnake() {
@@ -126,15 +119,16 @@ public class Snake {
         }
     }
 
-    public String snakePowerUpCollision(ArrayList<PowerUp> powerUpArrayList) {
-        String powerUpType = null;
-        for (PowerUp p : powerUpArrayList) {
+    public String snakePowerUpCollision(HashMap<String, PowerUp> powerUpHashMap) {
+        String powerUpType;
+        for (PowerUp p : powerUpHashMap.values()) {
             if (snakeX[0] == p.getPowerUpX() && snakeY[0] == p.getPowerUpY()) {
                 powerUpType =  p.getPowerUpType();
-                powerUpArrayList.remove(p);
+                p.setIsPowerUpSpawned(false);
+                return powerUpType;
             }
         }
-        return powerUpType;
+        return null;
     }
 
     public void increaseSnakeLength(int amount) {

@@ -63,7 +63,9 @@ public class SnakeEngine extends SurfaceView implements Runnable {
     private CountDownTimer mGreenPowerUpCountDownTimer;
     private boolean isPowerUpTimerRunning = true;
     private int powerUpGenerator;
-    private static ArrayList<PowerUp> powerUpList = new ArrayList<PowerUp>();
+    private static ArrayList<PowerUp> powerUpList = new ArrayList<>();
+    private static ArrayList<Apple> appleArrayList = new ArrayList<>();
+    private static HashMap<String, PowerUp> powerUpHashMap = new HashMap<>();
     private int snakeGreenPowerUpCounter = 0;
 
     public SnakeEngine(Context context, Point size) {
@@ -151,10 +153,10 @@ public class SnakeEngine extends SurfaceView implements Runnable {
             snake.increaseSnakeLength(1);
         }
         //TODO remove powerup after collision
-        if (snake.snakePowerUpCollision(powerUpList) == "Gold") {
+        if (snake.snakePowerUpCollision(powerUpHashMap) == "Gold") {
             score += 5;
         }
-        else if (snake.snakePowerUpCollision(powerUpList) == "Green") {
+        else if (snake.snakePowerUpCollision(powerUpHashMap) == "Green") {
             FPS = 20;
             snakeGreenPowerUpCounter = 0;
         }
@@ -171,16 +173,34 @@ public class SnakeEngine extends SurfaceView implements Runnable {
         Random random = new Random();
         powerUpGenerator = random.nextInt(2);
         if (powerUpGenerator == 0) {
-            PowerUp powerUp;
-            PowerUpFactory PF = new PowerUpFactory();
-            powerUp = PF.getPowerUp("Gold", numBlocksHigh, NUM_BLOCKS_WIDE);
-            powerUpList.add(powerUp);
+            if (powerUpHashMap.containsKey("Gold")) {
+                if (!powerUpHashMap.get("Gold").isPowerUpSpawned()) {
+                    PowerUp powerUp;
+                    PowerUpFactory PF = new PowerUpFactory();
+                    powerUp = PF.getPowerUp("Gold", numBlocksHigh, NUM_BLOCKS_WIDE);
+                    powerUpHashMap.put("Gold", powerUp);
+                }
+            } else {
+                PowerUp powerUp;
+                PowerUpFactory PF = new PowerUpFactory();
+                powerUp = PF.getPowerUp("Gold", numBlocksHigh, NUM_BLOCKS_WIDE);
+                powerUpHashMap.put("Gold", powerUp);
+            }
         }
         else if (powerUpGenerator == 1) {
-            PowerUp powerUp;
-            PowerUpFactory PF = new PowerUpFactory();
-            powerUp = PF.getPowerUp("Green", numBlocksHigh, NUM_BLOCKS_WIDE);
-            powerUpList.add(powerUp);
+            if (powerUpHashMap.containsKey("Green")) {
+                if (!powerUpHashMap.get("Green").isPowerUpSpawned()) {
+                    PowerUp powerUp;
+                    PowerUpFactory PF = new PowerUpFactory();
+                    powerUp = PF.getPowerUp("Green", numBlocksHigh, NUM_BLOCKS_WIDE);
+                    powerUpHashMap.put("Green", powerUp);
+                }
+            } else {
+                PowerUp powerUp;
+                PowerUpFactory PF = new PowerUpFactory();
+                powerUp = PF.getPowerUp("Green", numBlocksHigh, NUM_BLOCKS_WIDE);
+                powerUpHashMap.put("Green", powerUp);
+            }
         } else {
             Log.e("POWERUP", "Generated powerup number not in bounds");
         }
@@ -227,13 +247,15 @@ public class SnakeEngine extends SurfaceView implements Runnable {
     }
 
     public void drawPowerUps() {
-        for (PowerUp p : powerUpList) {
+        for (PowerUp p: powerUpHashMap.values()) {
             paint.setColor(p.getPaintColour());
-            canvas.drawRect(p.getPowerUpX() * blockSize,
-                    (p.getPowerUpY() * blockSize),
-                    (p.getPowerUpX() * blockSize) + blockSize,
-                    (p.getPowerUpY() * blockSize) + blockSize,
-                    paint);
+            if (p.isPowerUpSpawned()) {
+                canvas.drawRect(p.getPowerUpX() * blockSize,
+                        (p.getPowerUpY() * blockSize),
+                        (p.getPowerUpX() * blockSize) + blockSize,
+                        (p.getPowerUpY() * blockSize) + blockSize,
+                        paint);
+            }
         }
     }
 
