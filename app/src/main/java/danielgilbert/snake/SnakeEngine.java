@@ -32,7 +32,7 @@ public class SnakeEngine extends SurfaceView implements Runnable {
     private int blockSize;
 
     // The size in segments of the playable area
-    private final int NUM_BLOCKS_WIDE = 60;
+    private final int NUM_BLOCKS_WIDE = 40;
     private int numBlocksHigh;
 
     // Control pausing between updates
@@ -64,6 +64,7 @@ public class SnakeEngine extends SurfaceView implements Runnable {
     private boolean isPowerUpTimerRunning = true;
     private int powerUpGenerator;
     private ArrayList<Apple> appleArrayList = new ArrayList<>();
+    private ArrayList<Wall> wallArrayList = new ArrayList<>();
     private HashMap<String, PowerUp> powerUpHashMap = new HashMap<>();
     private int snakeGreenPowerUpCounter = 0;
     private int appleSpawnCounter = 0;
@@ -131,6 +132,7 @@ public class SnakeEngine extends SurfaceView implements Runnable {
         snake.setupSnake();
         apple.setupApple();
         appleArrayList.add(apple);
+        setupWalls();
         score = 0;
         // Setup nextFrameTime so an update is triggered
         nextFrameTime = System.currentTimeMillis();
@@ -272,6 +274,9 @@ public class SnakeEngine extends SurfaceView implements Runnable {
             //Draw powerups
             drawPowerUps();
 
+            //Draw Walls
+            drawWalls();
+
             // Unlock the canvas and reveal the graphics for this frame
             surfaceHolder.unlockCanvasAndPost(canvas);
         }
@@ -305,6 +310,89 @@ public class SnakeEngine extends SurfaceView implements Runnable {
                     canvas.drawBitmap(scaledArrowBitmap, p.getPowerUpX() * blockSize, p.getPowerUpY() * blockSize, paint);
                 }
             }
+        }
+    }
+
+    private void setupWalls() {
+        //Left Walls
+        for (int i = 0; i <= numBlocksHigh / 3; i++) {
+            Wall wall = new Wall(0, i);
+            wallArrayList.add(wall);
+        }
+        for (int i = numBlocksHigh - numBlocksHigh / 3; i <= numBlocksHigh; i++) {
+            Wall wall = new Wall(0, i);
+            wallArrayList.add(wall);
+        }
+
+        //Top Walls
+        for (int i = 0; i <= NUM_BLOCKS_WIDE / 3; i++) {
+            Wall wall = new Wall(i, 0);
+            wallArrayList.add(wall);
+        }
+
+        for (int i = NUM_BLOCKS_WIDE - NUM_BLOCKS_WIDE / 3; i <= NUM_BLOCKS_WIDE; i++) {
+            Wall wall = new Wall(i, 0);
+            wallArrayList.add(wall);
+        }
+//TODO might have to implement more walls depending on collision detection depending on getWall location methods - screen ratio causes the bottom and right walls to be out by 0.5 units
+        //Bottom Walls
+        for (int i = 0; i <= NUM_BLOCKS_WIDE / 3; i++) {
+            Wall wall = new Wall(i, (float)(numBlocksHigh - 0.5));
+            wallArrayList.add(wall);
+        }
+
+        for (int i = NUM_BLOCKS_WIDE - NUM_BLOCKS_WIDE / 3; i <= NUM_BLOCKS_WIDE; i++) {
+            Wall wall = new Wall(i, (float)(numBlocksHigh - 0.5));
+            wallArrayList.add(wall);
+        }
+
+        //Right Walls
+/*        for (int i = 0; i <= numBlocksHigh / 3; i++) {
+            Wall wall = new Wall((float)(NUM_BLOCKS_WIDE - 0.5), i);
+            wallArrayList.add(wall);
+        }
+        for (int i = numBlocksHigh - numBlocksHigh / 3; i <= numBlocksHigh; i++) {
+            Wall wall = new Wall((float)(NUM_BLOCKS_WIDE - 0.5), i);
+            wallArrayList.add(wall);
+        }*/
+        for (int i = 0; i <= numBlocksHigh / 3; i++) {
+            Wall wall = new Wall((float)(NUM_BLOCKS_WIDE - 1), i);
+            wallArrayList.add(wall);
+        }
+        for (int i = numBlocksHigh - numBlocksHigh / 3; i <= numBlocksHigh; i++) {
+            Wall wall = new Wall((float)(NUM_BLOCKS_WIDE - 1), i);
+            wallArrayList.add(wall);
+        }
+
+        //Center Vertical Walls
+        for (int i = numBlocksHigh / 2 - 5; i <= numBlocksHigh / 2 + 5; i++) {
+            Wall wall = new Wall(NUM_BLOCKS_WIDE / 2 - 1, i);
+            wallArrayList.add(wall);
+            wall = new Wall(NUM_BLOCKS_WIDE / 2, i);
+            wallArrayList.add(wall);
+            wall = new Wall(NUM_BLOCKS_WIDE / 2 + 1, i);
+            wallArrayList.add(wall);
+        }
+
+        //Center Horizontal Walls
+        for (int i = NUM_BLOCKS_WIDE / 2 - 6; i <= NUM_BLOCKS_WIDE / 2 + 6; i++) {
+            Wall wall = new Wall(i, numBlocksHigh / 2 - 1);
+            wallArrayList.add(wall);
+            wall = new Wall(i, numBlocksHigh / 2);
+            wallArrayList.add(wall);
+            wall = new Wall(i, numBlocksHigh / 2 + 1);
+            wallArrayList.add(wall);
+        }
+    }
+
+    private void drawWalls() {
+        for (Wall w : wallArrayList) {
+            paint.setARGB(255, 57, 255, 20);
+            canvas.drawRect(w.getWallX() * blockSize,
+                        (w.getWallY() * blockSize),
+                        (w.getWallX() * blockSize) + blockSize - 1,
+                        (w.getWallY() * blockSize) + blockSize - 1,
+                        paint);
         }
     }
 
