@@ -68,6 +68,7 @@ public class SnakeEngine extends SurfaceView implements Runnable {
     private HashMap<String, PowerUp> powerUpHashMap = new HashMap<>();
     private int snakeGreenPowerUpCounter = 0;
     private int appleSpawnCounter = 0;
+    private final int BEZEL_HEIGHT = 2;
     Bitmap appleBitmap;
     Bitmap scaledAppleBitmap;
     Bitmap goldAppleBitmap;
@@ -139,6 +140,7 @@ public class SnakeEngine extends SurfaceView implements Runnable {
         mCountDownTimer = new CountDownTimer(3000, MILLIS_PER_SECOND) {
 
             public void onTick(long millisUntilFinished) {
+                //TODO hashmap multiple timers?
                 snakeGreenPowerUpCounter++;
                 appleSpawnCounter++;
             }
@@ -170,7 +172,9 @@ public class SnakeEngine extends SurfaceView implements Runnable {
             score++;
             snake.increaseSnakeLength(1);
         }
-        //TODO remove powerup after collision
+        if (snake.wallCollision(wallArrayList, BEZEL_HEIGHT, numBlocksHigh)) {
+            score = 0;
+        }
         if (snake.snakePowerUpCollision(powerUpHashMap) == "Gold") {
             score += 5;
         }
@@ -250,7 +254,7 @@ public class SnakeEngine extends SurfaceView implements Runnable {
 
             // Fill the screen with Game Code School blue
             canvas.drawColor(Color.argb(255, 26, 128, 182));
-
+            drawBezel();
             // Set the color of the paint to draw the snake white
             paint.setColor(Color.argb(255, 255, 255, 255));
 
@@ -267,14 +271,8 @@ public class SnakeEngine extends SurfaceView implements Runnable {
 
             // Set the color of the paint to draw apple red
             paint.setColor(Color.argb(255, 255, 0, 0));
-
-            // Draw apple
             drawApples();
-
-            //Draw powerups
             drawPowerUps();
-
-            //Draw Walls
             drawWalls();
 
             // Unlock the canvas and reveal the graphics for this frame
@@ -315,62 +313,53 @@ public class SnakeEngine extends SurfaceView implements Runnable {
 
     private void setupWalls() {
         //Left Walls
-        for (int i = 0; i <= numBlocksHigh / 3; i++) {
-            Wall wall = new Wall(0, i);
+        for (int i = 0; i < numBlocksHigh / 3; i++) {
+            Wall wall = new Wall(0, i + BEZEL_HEIGHT);
             wallArrayList.add(wall);
         }
-        for (int i = numBlocksHigh - numBlocksHigh / 3; i <= numBlocksHigh; i++) {
-            Wall wall = new Wall(0, i);
+        for (int i = numBlocksHigh - numBlocksHigh / 3 + 1; i < numBlocksHigh; i++) {
+            Wall wall = new Wall(0, i - BEZEL_HEIGHT);
             wallArrayList.add(wall);
         }
 
         //Top Walls
-        for (int i = 0; i <= NUM_BLOCKS_WIDE / 3; i++) {
-            Wall wall = new Wall(i, 0);
+        for (int i = 0; i < NUM_BLOCKS_WIDE / 3; i++) {
+            Wall wall = new Wall(i, 0 + BEZEL_HEIGHT);
             wallArrayList.add(wall);
         }
 
-        for (int i = NUM_BLOCKS_WIDE - NUM_BLOCKS_WIDE / 3; i <= NUM_BLOCKS_WIDE; i++) {
-            Wall wall = new Wall(i, 0);
+        for (int i = NUM_BLOCKS_WIDE - NUM_BLOCKS_WIDE / 3; i < NUM_BLOCKS_WIDE; i++) {
+            Wall wall = new Wall(i, 0 + BEZEL_HEIGHT);
             wallArrayList.add(wall);
         }
-//TODO might have to implement more walls depending on collision detection depending on getWall location methods - screen ratio causes the bottom and right walls to be out by 0.5 units
         //Bottom Walls
-        for (int i = 0; i <= NUM_BLOCKS_WIDE / 3; i++) {
-            Wall wall = new Wall(i, (float)(numBlocksHigh - 0.5));
+        for (int i = 0; i < NUM_BLOCKS_WIDE / 3; i++) {
+            Wall wall = new Wall(i, (float)(numBlocksHigh - BEZEL_HEIGHT));
             wallArrayList.add(wall);
         }
 
-        for (int i = NUM_BLOCKS_WIDE - NUM_BLOCKS_WIDE / 3; i <= NUM_BLOCKS_WIDE; i++) {
-            Wall wall = new Wall(i, (float)(numBlocksHigh - 0.5));
+        for (int i = NUM_BLOCKS_WIDE - NUM_BLOCKS_WIDE / 3; i < NUM_BLOCKS_WIDE; i++) {
+            Wall wall = new Wall(i, (float)(numBlocksHigh - BEZEL_HEIGHT));
             wallArrayList.add(wall);
         }
 
         //Right Walls
-/*        for (int i = 0; i <= numBlocksHigh / 3; i++) {
-            Wall wall = new Wall((float)(NUM_BLOCKS_WIDE - 0.5), i);
+        for (int i = 0; i < numBlocksHigh / 3; i++) {
+            Wall wall = new Wall((float)(NUM_BLOCKS_WIDE - 1), i + BEZEL_HEIGHT);
             wallArrayList.add(wall);
         }
-        for (int i = numBlocksHigh - numBlocksHigh / 3; i <= numBlocksHigh; i++) {
-            Wall wall = new Wall((float)(NUM_BLOCKS_WIDE - 0.5), i);
-            wallArrayList.add(wall);
-        }*/
-        for (int i = 0; i <= numBlocksHigh / 3; i++) {
-            Wall wall = new Wall((float)(NUM_BLOCKS_WIDE - 1), i);
-            wallArrayList.add(wall);
-        }
-        for (int i = numBlocksHigh - numBlocksHigh / 3; i <= numBlocksHigh; i++) {
-            Wall wall = new Wall((float)(NUM_BLOCKS_WIDE - 1), i);
+        for (int i = numBlocksHigh - numBlocksHigh / 3 + 1; i < numBlocksHigh; i++) {
+            Wall wall = new Wall((float)(NUM_BLOCKS_WIDE - 1), i - BEZEL_HEIGHT);
             wallArrayList.add(wall);
         }
 
         //Center Vertical Walls
-        for (int i = numBlocksHigh / 2 - 5; i <= numBlocksHigh / 2 + 5; i++) {
-            Wall wall = new Wall(NUM_BLOCKS_WIDE / 2 - 1, i);
+        for (int i = numBlocksHigh / 2 - 5 - BEZEL_HEIGHT; i <= numBlocksHigh / 2 + 5 - BEZEL_HEIGHT; i++) {
+            Wall wall = new Wall(NUM_BLOCKS_WIDE / 2 - 1, i + BEZEL_HEIGHT);
             wallArrayList.add(wall);
-            wall = new Wall(NUM_BLOCKS_WIDE / 2, i);
+            wall = new Wall(NUM_BLOCKS_WIDE / 2, i + BEZEL_HEIGHT);
             wallArrayList.add(wall);
-            wall = new Wall(NUM_BLOCKS_WIDE / 2 + 1, i);
+            wall = new Wall(NUM_BLOCKS_WIDE / 2 + 1, i + BEZEL_HEIGHT);
             wallArrayList.add(wall);
         }
 
@@ -393,6 +382,31 @@ public class SnakeEngine extends SurfaceView implements Runnable {
                         (w.getWallX() * blockSize) + blockSize - 1,
                         (w.getWallY() * blockSize) + blockSize - 1,
                         paint);
+        }
+    }
+
+    private void drawBezel() {
+        paint.setColor(Color.argb(255, 77, 31, 10));
+        //Top Bezel
+        for (int i = 0; i < NUM_BLOCKS_WIDE; i++) {
+            for (int j = 0; j < BEZEL_HEIGHT; j++) {
+                canvas.drawRect(i * blockSize,
+                        (j * blockSize),
+                        (i * blockSize) + blockSize,
+                        (j * blockSize) + blockSize,
+                        paint);
+            }
+        }
+
+        //Bottom Bezel
+        for (int i = 0; i < NUM_BLOCKS_WIDE; i++) {
+            for (int j = (numBlocksHigh - BEZEL_HEIGHT + 1); j <= numBlocksHigh; j++) {
+                canvas.drawRect(i * blockSize,
+                        (j * blockSize),
+                        (i * blockSize) + blockSize,
+                        (j * blockSize) + blockSize,
+                        paint);
+            }
         }
     }
 

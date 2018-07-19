@@ -26,7 +26,7 @@ public class Snake {
         snakeX = new int[200];
         snakeY = new int[200];
         snakeLength = 1;
-        snakeX[0] = numHorizontalScreenBlocks / 2;
+        snakeX[0] = 10;
         snakeY[0] = numVerticalScreenBlocks / 2;
     }
 
@@ -136,5 +136,15 @@ public class Snake {
 
     public void increaseSnakeLength(int amount) {
         snakeLength += amount;
+    }
+
+    public boolean wallCollision(ArrayList<Wall> wallArrayList, int BEZEL_HEIGHT, int numBlocksHigh) {
+        for (Wall w : wallArrayList) {
+            if (snakeX[0] == w.getWallX() && snakeY[0] == w.getWallY()) {
+                return true;
+            }
+        }
+        //check if the snake hits the bottom wall due to the 0.5 float value (screen resolution issue)
+        return false;
     }
 }
