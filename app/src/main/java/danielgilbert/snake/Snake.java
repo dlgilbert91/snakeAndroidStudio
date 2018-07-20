@@ -1,5 +1,7 @@
 package danielgilbert.snake;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -76,37 +78,37 @@ public class Snake {
         }
     }
 
-    public void setSnakeDirection(float motionEventValueX, float motionEventValueY, int screenX, int screenY) {
+    public void setSnakeDirection(float motionEventValueX, float motionEventValueY) {
         switch(direction) {
             case UP:
-                if (motionEventValueX < screenX / 2) {
+                if (motionEventValueX < snakeX[0]) {
                     direction = Direction.LEFT;
                 }
-                else if (motionEventValueX > screenX / 2) {
+                else if (motionEventValueX > snakeX[0]) {
                     direction = Direction.RIGHT;
                 }
                 break;
             case DOWN:
-                if (motionEventValueX < screenX / 2) {
+                if (motionEventValueX < snakeX[0]) {
                     direction = Direction.LEFT;
                 }
-                else if (motionEventValueX > screenX / 2) {
+                else if (motionEventValueX > snakeX[0]) {
                     direction = Direction.RIGHT;
                 }
                 break;
             case LEFT:
-                if (motionEventValueY < screenY / 2) {
+                if (motionEventValueY < snakeY[0]) {
                     direction = Direction.UP;
                 }
-                else if (motionEventValueY > screenY / 2) {
+                else if (motionEventValueY > snakeY[0]) {
                     direction = Direction.DOWN;
                 }
                 break;
             case RIGHT:
-                if (motionEventValueY < screenY / 2) {
+                if (motionEventValueY < snakeY[0]) {
                     direction = Direction.UP;
                 }
-                else if (motionEventValueY > screenY / 2) {
+                else if (motionEventValueY > snakeY[0]) {
                     direction = Direction.DOWN;
                 }
                 break;

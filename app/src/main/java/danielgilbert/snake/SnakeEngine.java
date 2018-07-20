@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
+import android.media.MediaPlayer;
 import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -75,6 +76,7 @@ public class SnakeEngine extends SurfaceView implements Runnable {
     private Bitmap scaledGoldAppleBitmap;
     private Bitmap arrowBitmap;
     private Bitmap scaledArrowBitmap;
+    private MediaPlayer mainMusic;
 
     public SnakeEngine(Context context, Point size) {
         super(context);
@@ -91,7 +93,7 @@ public class SnakeEngine extends SurfaceView implements Runnable {
         // Initialize the drawing objects
         surfaceHolder = getHolder();
         paint = new Paint();
-
+        mainMusic = MediaPlayer.create(getContext(), R.raw.komiku_07_battle_of_pogs);
         // Start the game
         newGame();
     }
@@ -112,6 +114,7 @@ public class SnakeEngine extends SurfaceView implements Runnable {
 
     public void pause() {
         isPlaying = false;
+        mainMusic.pause();
         try {
             thread.join();
         } catch (InterruptedException e) {
@@ -121,6 +124,7 @@ public class SnakeEngine extends SurfaceView implements Runnable {
 
     public void resume() {
         isPlaying = true;
+        mainMusic.start();
         thread = new Thread(this);
         thread.start();
     }
@@ -138,7 +142,7 @@ public class SnakeEngine extends SurfaceView implements Runnable {
         score = 0;
         // Setup nextFrameTime so an update is triggered
         nextFrameTime = System.currentTimeMillis();
-        mCountDownTimer = new CountDownTimer(1000, MILLIS_PER_SECOND) {
+        mCountDownTimer = new CountDownTimer(5000, MILLIS_PER_SECOND) {
 
             public void onTick(long millisUntilFinished) {
                 //TODO hashmap multiple timers?
@@ -151,6 +155,8 @@ public class SnakeEngine extends SurfaceView implements Runnable {
                 generatePowerUp();
             }
         }.start();
+
+        mainMusic.start();
     }
 
     private void checkTimer() {
@@ -166,6 +172,7 @@ public class SnakeEngine extends SurfaceView implements Runnable {
         appleArrayList.clear();
         powerUpHashMap.clear();
         isPowerUpTimerRunning = false;
+        FPS = 10;
     }
 
     public void update() {
@@ -441,7 +448,7 @@ public class SnakeEngine extends SurfaceView implements Runnable {
 
         switch (motionEvent.getAction() & MotionEvent.ACTION_MASK) {
             case MotionEvent.ACTION_UP:
-                snake.setSnakeDirection(motionEvent.getX(), motionEvent.getY(), screenX, screenY);
+                snake.setSnakeDirection(motionEvent.getX() / blockSize, motionEvent.getY() / blockSize);
         }
         return true;
     }
