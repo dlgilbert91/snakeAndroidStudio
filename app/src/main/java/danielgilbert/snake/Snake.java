@@ -12,7 +12,7 @@ public class Snake {
 
     private int[] snakeX;
     private int[] snakeY;
-    Direction direction = Direction.RIGHT;
+    private Direction direction;
 
     //TODO SETUP SNAKE AS A SINGLETON
     //TODO move setupsnake() call out of constructor
@@ -26,8 +26,9 @@ public class Snake {
         snakeX = new int[200];
         snakeY = new int[200];
         snakeLength = 1;
-        snakeX[0] = 10;
-        snakeY[0] = numVerticalScreenBlocks / 2;
+        snakeX[0] = 2;
+        snakeY[0] = 4;
+        direction = Direction.RIGHT;
     }
 
     public int getSnakeLength() {
@@ -42,7 +43,7 @@ public class Snake {
         return snakeY[index];
     }
 
-    public void moveSnake() {
+    public void moveSnake(int BEZEL_HEIGHT) {
         for (int i = snakeLength; i > 0; i--) {
             snakeX[i] = snakeX[i - 1];
             snakeY[i] = snakeY[i - 1];
@@ -50,14 +51,14 @@ public class Snake {
         switch (direction) {
             case UP:
                 snakeY[0]--;
-                if (snakeY[0] < 0) {
-                    snakeY[0] = numVerticalScreenBlocks;
+                if (snakeY[0] < BEZEL_HEIGHT) {
+                    snakeY[0] = numVerticalScreenBlocks - BEZEL_HEIGHT;
                 }
                 break;
             case DOWN:
                 snakeY[0]++;
-                if (snakeY[0] > numVerticalScreenBlocks) {
-                    snakeY[0] = 0;
+                if (snakeY[0] > numVerticalScreenBlocks - BEZEL_HEIGHT) {
+                    snakeY[0] = BEZEL_HEIGHT;
                 }
                 break;
             case LEFT:
@@ -126,9 +127,9 @@ public class Snake {
         String powerUpType;
         for (PowerUp p : powerUpHashMap.values()) {
             if (snakeX[0] == p.getPowerUpX() && snakeY[0] == p.getPowerUpY()) {
-                powerUpType =  p.getPowerUpType();
-                p.setIsPowerUpSpawned(false);
-                return powerUpType;
+                    powerUpType = p.getPowerUpType();
+                    p.setIsPowerUpSpawned(false);
+                    return powerUpType;
             }
         }
         return null;

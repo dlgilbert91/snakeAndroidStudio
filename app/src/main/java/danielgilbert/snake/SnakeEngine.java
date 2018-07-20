@@ -69,17 +69,16 @@ public class SnakeEngine extends SurfaceView implements Runnable {
     private int snakeGreenPowerUpCounter = 0;
     private int appleSpawnCounter = 0;
     private final int BEZEL_HEIGHT = 2;
-    Bitmap appleBitmap;
-    Bitmap scaledAppleBitmap;
-    Bitmap goldAppleBitmap;
-    Bitmap scaledGoldAppleBitmap;
-    Bitmap arrowBitmap;
-    Bitmap scaledArrowBitmap;
+    private Bitmap appleBitmap;
+    private Bitmap scaledAppleBitmap;
+    private Bitmap goldAppleBitmap;
+    private Bitmap scaledGoldAppleBitmap;
+    private Bitmap arrowBitmap;
+    private Bitmap scaledArrowBitmap;
 
     public SnakeEngine(Context context, Point size) {
         super(context);
-
-        context = context;
+        //context holds reference to activity
 
         screenX = size.x;
         screenY = size.y;
@@ -131,13 +130,15 @@ public class SnakeEngine extends SurfaceView implements Runnable {
         snake = new Snake(numBlocksHigh, NUM_BLOCKS_WIDE);
         setupBitmaps();
         snake.setupSnake();
-        apple.setupApple();
-        appleArrayList.add(apple);
         setupWalls();
+        if (apple.setupApple(wallArrayList, appleArrayList, powerUpHashMap, BEZEL_HEIGHT, numBlocksHigh)) {
+            appleArrayList.add(apple);
+        }
+
         score = 0;
         // Setup nextFrameTime so an update is triggered
         nextFrameTime = System.currentTimeMillis();
-        mCountDownTimer = new CountDownTimer(3000, MILLIS_PER_SECOND) {
+        mCountDownTimer = new CountDownTimer(1000, MILLIS_PER_SECOND) {
 
             public void onTick(long millisUntilFinished) {
                 //TODO hashmap multiple timers?
@@ -152,6 +153,21 @@ public class SnakeEngine extends SurfaceView implements Runnable {
         }.start();
     }
 
+    private void checkTimer() {
+        if (!isPowerUpTimerRunning) {
+            mCountDownTimer.start();
+            isPowerUpTimerRunning = true;
+        }
+    }
+
+    private void resetGame() {
+        score = 0;
+        snake.setupSnake();
+        appleArrayList.clear();
+        powerUpHashMap.clear();
+        isPowerUpTimerRunning = false;
+    }
+
     public void update() {
         //check snake location
         //check if apple eaten
@@ -162,18 +178,19 @@ public class SnakeEngine extends SurfaceView implements Runnable {
         }
         if (appleSpawnCounter >= 5) {
             Apple apple = new Apple(numBlocksHigh, NUM_BLOCKS_WIDE);
-            apple.setupApple();
-            appleArrayList.add(apple);
+            if (apple.setupApple(wallArrayList, appleArrayList, powerUpHashMap, BEZEL_HEIGHT, numBlocksHigh)) {
+                appleArrayList.add(apple);
+            }
             appleSpawnCounter = 0;
         }
 
-        snake.moveSnake();
+        snake.moveSnake(BEZEL_HEIGHT);
         if (snake.snakeAppleCollision(appleArrayList)) {
             score++;
             snake.increaseSnakeLength(1);
         }
         if (snake.wallCollision(wallArrayList, BEZEL_HEIGHT, numBlocksHigh)) {
-            score = 0;
+            resetGame();
         }
         if (snake.snakePowerUpCollision(powerUpHashMap) == "Gold") {
             score += 5;
@@ -181,13 +198,6 @@ public class SnakeEngine extends SurfaceView implements Runnable {
         else if (snake.snakePowerUpCollision(powerUpHashMap) == "Green") {
             FPS = 20;
             snakeGreenPowerUpCounter = 0;
-        }
-    }
-
-    private void checkTimer() {
-        if (!isPowerUpTimerRunning) {
-            mCountDownTimer.start();
-            isPowerUpTimerRunning = true;
         }
     }
 
@@ -247,7 +257,7 @@ public class SnakeEngine extends SurfaceView implements Runnable {
         }
     }
 
-    public void draw() {
+    private void draw() {
         // Get a lock on the canvas
         if (surfaceHolder.getSurface().isValid()) {
             canvas = surfaceHolder.lockCanvas();
@@ -280,7 +290,7 @@ public class SnakeEngine extends SurfaceView implements Runnable {
         }
     }
 
-    public void drawApples() {
+    private void drawApples() {
         for (Apple a : appleArrayList) {
             /*canvas.drawRect(a.getAppleX() * blockSize,
                     (a.getAppleY() * blockSize),
@@ -292,7 +302,7 @@ public class SnakeEngine extends SurfaceView implements Runnable {
         }
     }
 
-    public void drawPowerUps() {
+    private void drawPowerUps() {
         for (PowerUp p : powerUpHashMap.values()) {
             paint.setColor(p.getPaintColour());
             if (p.isPowerUpSpawned()) {
@@ -410,7 +420,7 @@ public class SnakeEngine extends SurfaceView implements Runnable {
         }
     }
 
-    public boolean updateRequired() {
+    private boolean updateRequired() {
 
         // Are we due to update the frame
         if(nextFrameTime <= System.currentTimeMillis()){

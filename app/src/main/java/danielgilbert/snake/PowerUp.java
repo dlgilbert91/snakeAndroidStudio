@@ -5,22 +5,14 @@ import java.util.Random;
 public abstract class PowerUp {
     private int xLocation;
     private int yLocation;
-    private int numHorizontalScreenBlocks;
-    private int numVerticalScreenBlocks;
     private boolean isActive;
 
-    public PowerUp(int verticalBlocks, int horizontalBlocks) {
+    public PowerUp(int xLocation, int yLocation) {
         isActive = true;
-        numHorizontalScreenBlocks = horizontalBlocks;
-        numVerticalScreenBlocks = verticalBlocks;
-        setPowerUpLocation();
+        this.xLocation = xLocation;
+        this.yLocation = yLocation;
     }
 
-    public void setPowerUpLocation() {
-        Random random = new Random();
-        xLocation = random.nextInt(numHorizontalScreenBlocks);
-        yLocation = random.nextInt(numVerticalScreenBlocks);
-    }
     public int getPowerUpX() {
         return xLocation;
     }

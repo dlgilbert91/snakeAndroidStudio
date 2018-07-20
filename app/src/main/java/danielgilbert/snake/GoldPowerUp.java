@@ -4,8 +4,8 @@ import android.graphics.Color;
 
 public class GoldPowerUp extends PowerUp {
 
-    public GoldPowerUp(int verticalBlocks, int horizontalBlocks) {
-        super(verticalBlocks, horizontalBlocks);
+    public GoldPowerUp(int xLocation, int yLocation) {
+        super(xLocation, yLocation);
     }
 
     @Override
