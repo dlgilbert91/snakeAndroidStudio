@@ -100,9 +100,7 @@ public class SnakeEngine extends SurfaceView implements Runnable {
 
     @Override
     public void run() {
-
         while (isPlaying) {
-
             // Update 10 times a second
             if(updateRequired()) {
                 update();
@@ -135,6 +133,7 @@ public class SnakeEngine extends SurfaceView implements Runnable {
         setupBitmaps();
         snake.setupSnake();
         setupWalls();
+
         if (apple.setupApple(wallArrayList, appleArrayList, powerUpHashMap, BEZEL_HEIGHT, numBlocksHigh)) {
             appleArrayList.add(apple);
         }
@@ -349,6 +348,7 @@ public class SnakeEngine extends SurfaceView implements Runnable {
             Wall wall = new Wall(i, 0 + BEZEL_HEIGHT);
             wallArrayList.add(wall);
         }
+
         //Bottom Walls
         for (int i = 0; i < NUM_BLOCKS_WIDE / 3; i++) {
             Wall wall = new Wall(i, (float)(numBlocksHigh - BEZEL_HEIGHT));
