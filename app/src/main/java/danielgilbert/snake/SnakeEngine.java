@@ -61,6 +61,7 @@ public class SnakeEngine extends SurfaceView implements Runnable {
     private Paint paint;
 
     private Snake snake;
+    private Wall walls;
     private CountDownTimer mCountDownTimer;
     private boolean isPowerUpTimerRunning = true;
     private int powerUpGenerator;
@@ -448,7 +449,7 @@ public class SnakeEngine extends SurfaceView implements Runnable {
 
         switch (motionEvent.getAction() & MotionEvent.ACTION_MASK) {
             case MotionEvent.ACTION_UP:
-                snake.setSnakeDirection(motionEvent.getX() / blockSize, motionEvent.getY() / blockSize);
+                snake.setSnakeDirection(motionEvent.getX(), motionEvent.getY(), screenX, screenY);
         }
         return true;
     }

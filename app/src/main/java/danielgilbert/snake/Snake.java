@@ -17,7 +17,6 @@ public class Snake {
     private Direction direction;
 
     //TODO SETUP SNAKE AS A SINGLETON
-    //TODO move setupsnake() call out of constructor
 
     public Snake(int verticalBlocks, int horizontalBlocks) {
         this.numVerticalScreenBlocks = verticalBlocks;
@@ -78,37 +77,37 @@ public class Snake {
         }
     }
 
-    public void setSnakeDirection(float motionEventValueX, float motionEventValueY) {
+    public void setSnakeDirection(float motionEventValueX, float motionEventValueY, int screenX, int screenY) {
         switch(direction) {
             case UP:
-                if (motionEventValueX < snakeX[0]) {
+                if (motionEventValueX < screenX / 2) {
                     direction = Direction.LEFT;
                 }
-                else if (motionEventValueX > snakeX[0]) {
+                else if (motionEventValueX > screenX / 2) {
                     direction = Direction.RIGHT;
                 }
                 break;
             case DOWN:
-                if (motionEventValueX < snakeX[0]) {
+                if (motionEventValueX < screenX / 2) {
                     direction = Direction.LEFT;
                 }
-                else if (motionEventValueX > snakeX[0]) {
+                else if (motionEventValueX > screenX / 2) {
                     direction = Direction.RIGHT;
                 }
                 break;
             case LEFT:
-                if (motionEventValueY < snakeY[0]) {
+                if (motionEventValueY < screenY / 2) {
                     direction = Direction.UP;
                 }
-                else if (motionEventValueY > snakeY[0]) {
+                else if (motionEventValueY > screenY / 2) {
                     direction = Direction.DOWN;
                 }
                 break;
             case RIGHT:
-                if (motionEventValueY < snakeY[0]) {
+                if (motionEventValueY < screenY / 2) {
                     direction = Direction.UP;
                 }
-                else if (motionEventValueY > snakeY[0]) {
+                else if (motionEventValueY > screenY / 2) {
                     direction = Direction.DOWN;
                 }
                 break;

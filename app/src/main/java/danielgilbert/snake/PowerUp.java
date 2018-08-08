@@ -29,7 +29,6 @@ public abstract class PowerUp {
         isActive = isSpawned;
     }
 
-    //todo public abstract void getSpawnSound();
     public abstract int getPaintColour();
     public abstract String getPowerUpType();
 }
